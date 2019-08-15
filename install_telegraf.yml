@@ -20,6 +20,11 @@
     apt:
       name: telegraf
 
+  - name: Copy config
+    copy:
+      src: ./files/telegraf.conf
+      dest: /etc/telegraf/telegraf.confg
+
   - name: Start telegraf
     service:
       name: telegraf
