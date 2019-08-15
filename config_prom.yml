@@ -1,0 +1,10 @@
+- hosts: prom
+  roles:
+  - cloudalchemy.prometheus
+  vars:
+    prometheus_targets:
+      node:
+      - targets:
+        - localhost:9180
+        labels:
+          env: docker-host
