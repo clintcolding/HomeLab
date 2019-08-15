@@ -1,3 +1,8 @@
+# HomeLab
+
+This is a collection of configurations for my Raspberry Pi home lab.
+
+
 ## Prometheus
 
 Copy configuration
@@ -27,11 +32,8 @@ sudo mv /tmp/telegraf.conf /etc/telegraf/
 sudo service telegraf restart
 ```
 
-## Get Container Memory Stats
-
-You need to enable the memory cgroup, the file to edit is `/boot/cmdline.txt`
-
-Add the follow line to the list `cgroup_enable=memory` and reboot your host.
+> You need to enable the memory cgroup, the file to edit is `/boot/cmdline.txt`
+> Add the following line to the list `cgroup_enable=memory` and reboot your pi.
 
 ## Stop All Containers
 
