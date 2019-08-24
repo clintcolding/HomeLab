@@ -1,6 +1,6 @@
 # HomeLab
 
-<img src="https://tinyurl.com/yxfkyucn" width="400">
+<img src="https://tinyurl.com/y2u66eud" width="800">
 
 This is a collection of configurations for my Raspberry Pi home lab.
 
