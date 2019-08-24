@@ -1,7 +1,8 @@
 # HomeLab
 
-This is a collection of configurations for my Raspberry Pi home lab.
+![](https://tinyurl.com/yxfkyucn | width=400)
 
+This is a collection of configurations for my Raspberry Pi home lab.
 
 ### Prometheus
 
