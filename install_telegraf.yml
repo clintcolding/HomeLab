@@ -1,4 +1,4 @@
-- hosts: all
+- hosts: rpi
   remote_user: pi
   become: yes
 
@@ -23,8 +23,8 @@
   - name: Copy config
     copy:
       src: ./files/telegraf.conf
-      dest: /etc/telegraf/telegraf.confg
-
+      dest: /etc/telegraf/telegraf.conf
+      
   - name: Start telegraf
     service:
       name: telegraf
