@@ -1,19 +1,35 @@
 - hosts: rpi
   remote_user: pi
   become: yes
+  
+  vars_files:
+    - ./vault.yml
+
+  vars:
+    ansible_ssh_pass: "{{ remote_pass }}"
 
   tasks:
-  - name: Update packages
+  - name: set hostname
+    command: hostnamectl set-hostname "{{ inventory_hostname }}"
+
+  - name: update /etc/hosts 
+    lineinfile:
+      dest: /etc/hosts
+      regexp: "^127.0.1.1\traspberrypi$"
+      line: "127.0.1.1\t{{ inventory_hostname }}"
+      state: present
+
+  - name: update packages
     apt:
       update_cache: yes
       cache_valid_time: 3600
 
-  - name: Install aptitude
+  - name: install aptitude
     apt:
       name: aptitude
       state: latest
 
-  - name: Install docker prereqs
+  - name: install docker prereqs
     apt:
       name: "{{ packages }}"
       state: latest
@@ -23,15 +39,15 @@
         - ca-certificates
         - software-properties-common
 
-  - name: Add docker GPG Key
+  - name: add docker GPG Key
     apt_key:
       url: https://download.docker.com/linux/raspbian/gpg
 
-  - name: Add docker repo
+  - name: add docker repo
     apt_repository:
       repo: deb [arch=armhf] https://download.docker.com/linux/raspbian stretch stable
 
-  - name: Install docker-ce
+  - name: install docker
     apt:
       name: "{{ packages }}"
       # state: latest
@@ -42,6 +58,6 @@
         - containerd.io
   
   # Required to manage docker swarm via Ansible
-  - name: Install python docker sdk
+  - name: install python docker sdk
     pip:
       name: docker
