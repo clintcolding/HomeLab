@@ -1,15 +1,8 @@
-- hosts: all
+- hosts: rpi
   remote_user: pi
   become: yes
 
   tasks:
-  # Allows full monitoring of rpi memory
-  - name: Copy cmdline.txt file
-    copy:
-      src: ./files/cmdline.txt
-      dest: /boot/cmdline.txt
-      force: yes
-
   - name: Update packages
     apt:
       update_cache: yes
