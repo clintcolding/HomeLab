@@ -1,7 +1,13 @@
 - hosts: rpi
   remote_user: pi
   become: yes
+  
+  vars_files:
+    - ./vault.yml
 
+  vars:
+    ansible_ssh_pass: "{{ remote_pass }}"
+    
   tasks:
   - name: create leader
     docker_swarm:
@@ -17,6 +23,6 @@
     docker_swarm:
       state: join
       advertise_addr: 192.168.1.133
-      join_token: "{{ hostvars['192.168.1.132']['token']['stdout'] }}"
+      join_token: "{{ hostvars['rpi01']['token']['stdout'] }}"
       remote_addrs: [ '192.168.1.132:2377' ]
     when: role is undefined
