@@ -6,6 +6,10 @@
   - name: create leader
     docker_swarm:
       state: present
+    when: role is defined and role == "leader"
+
+  - name: get join token
+    shell: docker swarm join-token -q worker
     register: token
     when: role is defined and role == "leader"
 
@@ -13,6 +17,6 @@
     docker_swarm:
       state: join
       advertise_addr: 192.168.1.133
-      join_token: "{{ hostvars['192.168.1.132']['token']['swarm_facts']['JoinTokens']['Worker'] }}"
+      join_token: "{{ hostvars['192.168.1.132']['token']['stdout'] }}"
       remote_addrs: [ '192.168.1.132:2377' ]
     when: role is undefined
