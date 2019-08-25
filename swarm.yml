@@ -1,0 +1,18 @@
+- hosts: rpi
+  remote_user: pi
+  become: yes
+
+  tasks:
+  - name: create leader
+    docker_swarm:
+      state: present
+    register: token
+    when: role is defined and role == "leader"
+
+  - name: add workers
+    docker_swarm:
+      state: join
+      advertise_addr: 192.168.1.133
+      join_token: "{{ hostvars['192.168.1.132']['token']['swarm_facts']['JoinTokens']['Worker'] }}"
+      remote_addrs: [ '192.168.1.132:2377' ]
+    when: role is undefined
