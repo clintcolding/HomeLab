@@ -4,7 +4,7 @@
     <img src="https://tinyurl.com/y2u66eud" width="800">
 </p>
 
-This is a collection of Ansible configurations for my Raspberry Pi home lab.
+This is a collection of Ansible playbooks for my Raspberry Pi home lab.
 
 ### SSH Configuration
 
