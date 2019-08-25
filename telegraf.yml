@@ -2,30 +2,36 @@
   remote_user: pi
   become: yes
 
+  vars_files:
+    - ./vault.yml
+
+  vars:
+    ansible_ssh_pass: "{{ remote_pass }}"
+
   tasks:
-  - name: Update packages
+  - name: update packages
     apt:
       update_cache: yes
       cache_valid_time: 3600
 
-  - name: Add influxdb key
+  - name: add influxdb key
     apt_key:
       url: https://repos.influxdata.com/influxdb.key
 
-  - name: Add influxdata repo
+  - name: add influxdata repo
     apt_repository:
       repo: deb https://repos.influxdata.com/debian stretch stable
 
-  - name: Install telegraf
+  - name: install telegraf
     apt:
       name: telegraf
 
-  - name: Copy config
+  - name: copy config
     copy:
       src: ./files/telegraf.conf
       dest: /etc/telegraf/telegraf.conf
       
-  - name: Start telegraf
+  - name: start telegraf
     service:
       name: telegraf
-      state: started
+      state: restarted
