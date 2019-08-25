@@ -1,0 +1,31 @@
+- hosts: rpi
+  remote_user: pi
+  become: yes
+
+  tasks:
+  - name: Update packages
+    apt:
+      update_cache: yes
+      cache_valid_time: 3600
+
+  - name: Add influxdb key
+    apt_key:
+      url: https://repos.influxdata.com/influxdb.key
+
+  - name: Add influxdata repo
+    apt_repository:
+      repo: deb https://repos.influxdata.com/debian stretch stable
+
+  - name: Install telegraf
+    apt:
+      name: telegraf
+
+  - name: Copy config
+    copy:
+      src: ./files/telegraf.conf
+      dest: /etc/telegraf/telegraf.conf
+      
+  - name: Start telegraf
+    service:
+      name: telegraf
+      state: started
