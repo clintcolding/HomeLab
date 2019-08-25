@@ -48,7 +48,7 @@ sudo docker run --name prom -d -p 9090:9090 -v /tmp/prometheus.yml:/etc/promethe
 
 ### Telegraf
 
-In order to collect memory metrics you need to enable the memory cgroup by adding `cgroup_enable=memory` to `/boot/cmdline.txt` and then rebooting your rpi.
+In order to collect memory metrics you need to enable the memory cgroup by adding `cgroup_enable=memory` to `/boot/cmdline.txt` and then reboot your rpi.
 
 ### Useful Stuff
 
