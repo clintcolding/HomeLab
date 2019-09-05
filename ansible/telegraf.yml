@@ -30,6 +30,11 @@
     copy:
       src: ./files/telegraf.conf
       dest: /etc/telegraf/telegraf.conf
+  
+  - name: add telegraf user to docker group
+    user:
+      name: telegraf
+      groups: docker
       
   - name: start telegraf
     service:
