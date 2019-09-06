@@ -1,7 +1,7 @@
 # HomeLab
 
 <p align="center">
-    <img src="https://tinyurl.com/y2u66eud" width="800">
+    <img src="https://tinyurl.com/y2u66eud">
 </p>
 
 This is a collection of configurations for my Raspberry Pi home lab.
@@ -13,7 +13,7 @@ After flashing the SD card, drop an empty file named `ssh` in the boot directory
 ### Grafana
 
 <p align="center">
-    <img src="https://bit.ly/2k6S7gq" width="800">
+    <img src="https://bit.ly/2k6S7gq">
 </p>
 
 - [ ] Automate configuration
