@@ -6,17 +6,16 @@
 
 This is a collection of configurations for my Raspberry Pi home lab.
 
-### SSH Configuration
+### Things to do:
 
-After flashing the SD card, drop an empty file named `ssh` in the boot directory.
+- [ ] Automate Grafana configuration
+- [ ] Create playbook for full Azure Agent setup
 
 ### Grafana
 
 <p align="center">
     <img src="https://bit.ly/2k6S7gq">
 </p>
-
-- [ ] Automate configuration
 
 ### Telegraf
 
@@ -29,7 +28,13 @@ In order to collect memory metrics you need to enable the memory cgroup by addin
 - On rpi01 run `/usr/local/bin/config.sh` to configure the agent.
 - Run `/usr/local/bin/svc.sh install` and then `/usr/local/bin/config.sh start` to install and start the service.
 
+### RPi SSH Configuration
+
+After flashing the SD card, drop an empty file named `ssh` in the boot directory.
+
 #### Using SSH Keys
+
+> I'm using a vault file to authenticate to my RPi Docker hosts, alternatively you can use SSH keys.
 
 On the client run the following to create your SSH key (hit enter to save the keys to the default location of ~/.ssh):
 
