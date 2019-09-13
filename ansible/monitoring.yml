@@ -3,7 +3,7 @@
   become: yes
   
   vars_files:
-    - ./vault.yml
+    - ~/git/HomeLab/vault.yml
 
   vars:
     ansible_ssh_pass: "{{ remote_pass }}"
@@ -11,7 +11,7 @@
   tasks:
     - name: copy config
       copy:
-        src: ./files/prometheus.yml
+        src: ~/git/HomeLab/files/prometheus.yml
         dest: /etc/prometheus.yml
 
     - name: create grafana swarm service
@@ -19,18 +19,22 @@
         name: grafana
         image: grafana/grafana
         replicas: 1
-        publish:
-          - published_port: 3000
-            target_port: 3000
+        networks:
+          - traefik
+        labels:
+          traefik.port: "3000"
+          traefik.frontend.rule: "Host:grafana.clint.com"
 
     - name: create prometheus swarm service
       docker_swarm_service:
         name: prom
         image: prom/prometheus
         replicas: 1
-        publish:
-          - published_port: 9090
-            target_port: 9090
+        networks:
+          - traefik
+        labels:
+          traefik.port: "9090"
+          traefik.frontend.rule: "Host:prom.clint.com"
         mounts:
           - source: /etc/prometheus.yml
             target: /etc/prometheus/prometheus.yml
