@@ -1,0 +1,22 @@
+- hosts: rpi01
+  remote_user: pi
+  become: yes
+  
+  vars_files:
+    - ~/git/HomeLab/vault.yml
+
+  vars:
+    ansible_ssh_pass: "{{ remote_pass }}"
+
+  tasks:
+    - name: create whoami swarm service
+      docker_swarm_service:
+        name: whoami
+        image: stefanscherer/whoami
+        networks:
+          - traefik
+        replicas: 1
+        labels:
+          traefik.port: "8080"
+          traefik.frontend.rule: "Host:whoami.clint.com"
+          traefik.docker.network: "traefik"

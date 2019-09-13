@@ -1,0 +1,46 @@
+- hosts: rpi01
+  remote_user: pi
+  become: yes
+  
+  vars_files:
+    - ~/git/HomeLab/vault.yml
+
+  vars:
+    ansible_ssh_pass: "{{ remote_pass }}"
+
+  tasks:
+    - name: create traefik network
+      docker_network:
+        name: traefik
+        driver: overlay
+        attachable: yes
+
+    - name: create traefik swarm service
+      docker_swarm_service:
+        name: traefik
+        image: traefik
+        networks:
+          - traefik
+        replicas: 1
+        args: 
+          - "--api" 
+          - "--docker"
+          - "--docker.swarmMode"
+          - "--docker.domain=traefik"
+          - "--docker.watch"
+          - "--metrics"
+          - "--metrics.prometheus.buckets=0.1,0.3,1.2,5.0"
+          - "--logLevel=INFO"
+          - "--accessLog"
+        publish:
+          - published_port: 80
+            target_port: 80
+          - published_port: 8080
+            target_port: 8080
+        mounts:
+          - source: /var/run/docker.sock
+            target: /var/run/docker.sock
+            type: bind
+        placement:
+          constraints:
+            - node.role == manager

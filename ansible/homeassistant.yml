@@ -1,0 +1,21 @@
+- hosts: rpi01
+  remote_user: pi
+  become: yes
+  
+  vars_files:
+    - ~/git/HomeLab/vault.yml
+
+  vars:
+    ansible_ssh_pass: "{{ remote_pass }}"
+
+  tasks:
+    - name: create homeassistant service
+      docker_swarm_service:
+        name: homeassistant
+        image: homeassistant/home-assistant
+        replicas: 1
+        networks:
+          - traefik
+        labels:
+          traefik.port: "8123"
+          traefik.frontend.rule: "Host:ha.clint.com"
