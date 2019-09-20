@@ -15,8 +15,9 @@
         image: stefanscherer/whoami
         networks:
           - traefik
-        replicas: 1
+        replicas: 2
         labels:
-          traefik.port: "8080"
-          traefik.frontend.rule: "Host:whoami.clint.com"
-          traefik.docker.network: "traefik"
+          traefik.http.routers.whoami.rule: "Host(`whoami.thecoldings.com`)"
+          traefik.http.services.whoami-service.loadbalancer.server.port: "8080"
+          traefik.http.routers.whoami.entrypoints: "websecure"
+          traefik.http.routers.whoami.tls.certresolver: "httpchallenge"
