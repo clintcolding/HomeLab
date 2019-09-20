@@ -18,7 +18,7 @@
     - name: create traefik swarm service
       docker_swarm_service:
         name: traefik
-        image: traefik
+        image: traefik:v1.7
         networks:
           - traefik
         replicas: 1
@@ -35,8 +35,6 @@
         publish:
           - published_port: 80
             target_port: 80
-          - published_port: 8080
-            target_port: 8080
         mounts:
           - source: /var/run/docker.sock
             target: /var/run/docker.sock
@@ -44,3 +42,7 @@
         placement:
           constraints:
             - node.role == manager
+        labels:
+          traefik.port: "8080"
+          traefik.frontend.rule: "Host:traefik.thecoldings.com"
+          traefik.docker.network: "traefik"
