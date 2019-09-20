@@ -1,0 +1,67 @@
+- hosts: rpi01
+  remote_user: pi
+  become: yes
+  
+  vars_files:
+    - ~/git/HomeLab/vault.yml
+
+  vars:
+    ansible_ssh_pass: "{{ remote_pass }}"
+
+  tasks:
+    - name: create traefik network
+      docker_network:
+        name: traefik
+        driver: overlay
+        attachable: yes
+
+    - name: create certificate volume
+      docker_volume:
+        name: traefik-certs
+
+    - name: create traefik swarm service
+      docker_swarm_service:
+        name: traefikv2
+        image: traefik:v2.0
+        networks:
+          - traefik
+        replicas: 1
+        args: 
+          # Enable API and Dashboard UI
+          - "--api"
+          - "--api.insecure=true"
+          # Enable the Docker provider
+          - "--providers.docker"
+          - "--providers.docker.swarmmode=true"
+          - "--providers.docker.watch"
+          # Configure ACME Let's Encrypt
+          - "--entryPoints.web.address=:80"
+          - "--entryPoints.websecure.address=:443"
+          - "--certificatesResolvers.httpchallenge.acme.httpChallenge=true"
+          - "--certificatesResolvers.httpchallenge.acme.httpChallenge.entryPoint=web"
+          - "--certificatesResolvers.httpchallenge.acme.email=clintcolding@gmail.com"
+          - "--certificatesResolvers.httpchallenge.acme.storage=/letsencrypt/acme.json"
+          # Enable Prometheus metrics and logging
+          - "--metrics.prometheus"
+          - "--log"
+          - "--accessLog"
+        publish:
+          - published_port: 80
+            target_port: 80
+          - published_port: 443
+            target_port: 443
+          - published_port: 8080
+            target_port: 8080
+        mounts:
+          - source: /var/run/docker.sock
+            target: /var/run/docker.sock
+            type: bind
+          - source: traefik-certs
+            target: /letsencrypt
+            type: volume
+        placement:
+          constraints:
+            - node.role == manager
+        # labels:
+        #   traefik.http.routers.traefik.rule: "Host(`traefik.thecoldings.com`)"
+        #   traefik.http.services.traefik-service.loadbalancer.server.port: "8080"
