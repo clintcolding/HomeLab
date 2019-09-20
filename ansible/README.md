@@ -1,7 +1,5 @@
 # Ansible Playbooks
 
-## Playbooks
-
 | Playbook | Description |
 |----------|-------------|
 | azure-agent.yml | Installs prereqs and Azure Pipelines agent |
@@ -13,23 +11,21 @@
 | traefikv2.yml | Deploys Traefik v2.0 service |
 | whoami.yml | Deploys basic whoami service |
 
-## Use It
-
 ### Vault File
 
-To use these playbooks you need a vault file (containing RPi password), to create the vault file run:
+You'll need a vault file containing the RPi password, to create the vault file run:
 
 ```
 ansible-vault create vault.yml
 ```
 
-You will be prompted to create a password for the vault file itself, then you'll be prompted to create your variables. Add the following to the vault.yml:
+Add the following to the vault.yml:
 
 ```
 remote_pass: myrpipass
 ```
 
-### Run It
+### Run A Playbook
 
 ```
 ansible-playbook -i ./inventory/hosts.yml ./ansible/common.yml --ask-vault-pass
