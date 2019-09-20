@@ -8,8 +8,11 @@
   vars:
     ansible_ssh_pass: "{{ remote_pass }}"
 
-  tasks:
-    - name: copy config
+    - name: create grafana volume
+      docker_volume:
+        name: grafana-data
+
+    - name: copy prom config
       copy:
         src: ~/git/HomeLab/files/prometheus.yml
         dest: /etc/prometheus.yml
@@ -21,9 +24,18 @@
         replicas: 1
         networks:
           - traefik
+        placement:
+          constraints:
+            - node.hostname == rpi02
         labels:
-          traefik.port: "3000"
-          traefik.frontend.rule: "Host:grafana.clint.com"
+          traefik.http.routers.grafana.rule: "Host(`grafana.thecoldings.com`)"
+          traefik.http.services.grafana-service.loadbalancer.server.port: "3000"
+          traefik.http.routers.grafana.entrypoints: "websecure"
+          traefik.http.routers.grafana.tls.certresolver: "httpchallenge"
+        mounts:
+          - source: grafana-data
+            target: /var/lib/grafana/
+            type: volume
 
     - name: create prometheus swarm service
       docker_swarm_service:
@@ -33,8 +45,10 @@
         networks:
           - traefik
         labels:
-          traefik.port: "9090"
-          traefik.frontend.rule: "Host:prom.clint.com"
+          traefik.http.routers.prom.rule: "Host(`prom.thecoldings.com`)"
+          traefik.http.services.prom-service.loadbalancer.server.port: "9090"
+          traefik.http.routers.prom.entrypoints: "websecure"
+          traefik.http.routers.prom.tls.certresolver: "httpchallenge"
         mounts:
           - source: /etc/prometheus.yml
             target: /etc/prometheus/prometheus.yml
