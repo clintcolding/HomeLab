@@ -3,12 +3,13 @@
 | Playbook | Description |
 |----------|-------------|
 | azure-agent.yml | Installs prereqs and Azure Pipelines agent |
-| common.yml | Configure base RPi and install Docker |
+| clintcolding_web.yml | Deploys clintcolding.com site |
+| common.yml | Configures base RPi |
+| docker.yml | Installs Docker and configures Swarm |
 | monitoring.yml | Deploys Grafana and Prometheus service |
-| swarm.yml | Configures Docker Swarm |
 | telegraf.yml | Installs Telegraf on RPi nodes |
-| traefik.yml | Deploys Traefik v1.7 service |
 | traefikv2.yml | Deploys Traefik v2.0 service |
+| pihole_exporter.yml | Deploys a Prometheus exporter for PiHole |
 | whoami.yml | Deploys basic whoami service |
 
 ### Vault File
