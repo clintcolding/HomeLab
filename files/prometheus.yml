@@ -23,12 +23,20 @@ scrape_configs:
   scheme: http
   static_configs:
   - targets:
-    - 192.168.1.132:9180
-    - 192.168.1.133:9180
+    - 192.168.1.100:9180
+    - 192.168.1.101:9180
+    - 192.168.1.102:9180
 - job_name: traefik
   honor_timestamps: true
   metrics_path: /metrics
   scheme: http
   static_configs:
   - targets:
-    - 192.168.1.132:8080
+    - 192.168.1.101:8081
+- job_name: pihole
+  honor_timestamps: true
+  metrics_path: /metrics
+  scheme: http
+  static_configs:
+  - targets:
+    - pihole-exporter.thecoldings.com
