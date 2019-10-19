@@ -1,0 +1,70 @@
+- name: install docker and configure swarm
+  hosts: docker
+  remote_user: pi
+  become: yes
+  
+  vars_files:
+    - ~/git/HomeLab/vault.yml
+
+  vars:
+    ansible_ssh_pass: "{{ remote_pass }}"
+
+  tasks:
+  #---- Install Docker Engine ----#
+  - name: update packages
+    apt:
+      update_cache: yes
+      cache_valid_time: 3600
+
+  - name: install docker prereqs
+    apt:
+      name: "{{ packages }}"
+      state: latest
+    vars:
+      packages:
+        - apt-transport-https
+        - ca-certificates
+        - software-properties-common
+        - python-pip
+
+  - name: add docker GPG Key
+    apt_key:
+      url: https://download.docker.com/linux/raspbian/gpg
+
+  - name: add docker repo
+    apt_repository:
+      repo: deb [arch=armhf] https://download.docker.com/linux/raspbian stretch stable
+      update_cache: yes
+
+  - name: install docker
+    apt:
+      name: "{{ packages }}"
+    vars:
+      packages:
+        - docker-ce
+        - docker-ce-cli
+        - containerd.io
+  
+  # Required to manage docker swarm via Ansible
+  - name: install python docker sdk
+    pip:
+      name: docker
+
+  #---- Configure Docker Swarm ----#
+  - name: create leader
+    docker_swarm:
+      state: present
+    when: role is defined and role == "leader"
+
+  - name: get join token
+    shell: docker swarm join-token -q worker
+    register: token
+    when: role is defined and role == "leader"
+
+  - name: add workers
+    docker_swarm:
+      state: join
+      advertise_addr: 192.168.1.102
+      join_token: "{{ hostvars['rpi01']['token']['stdout'] }}"
+      remote_addrs: [ '192.168.1.101:2377' ]
+    when: role is undefined
