@@ -1,9 +1,10 @@
-- hosts: rpi
+- name: install and configure telegraf agent
+  hosts: all
   remote_user: pi
   become: yes
 
   vars_files:
-    - ./vault.yml
+    - ~/git/HomeLab/vault.yml
 
   vars:
     ansible_ssh_pass: "{{ remote_pass }}"
@@ -28,15 +29,20 @@
 
   - name: copy config
     copy:
-      src: ./files/telegraf.conf
+      src: ~/git/HomeLab/files/telegraf.conf
       dest: /etc/telegraf/telegraf.conf
   
-  - name: add telegraf user to docker group
-    user:
-      name: telegraf
-      groups: docker
-      
+  - name: copy rpi thermal script
+    copy:
+      src: ~/git/HomeLab/files/rpi-temp.sh
+      dest: /usr/local/bin/rpi-temp.sh
+
   - name: start telegraf
     service:
       name: telegraf
       state: restarted
+
+  - name: add telegraf user to docker group
+    user:
+      name: telegraf
+      groups: docker
