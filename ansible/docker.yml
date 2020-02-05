@@ -54,17 +54,13 @@
   - name: create leader
     docker_swarm:
       state: present
-    when: role is defined and role == "leader"
-
-  - name: get join token
-    shell: docker swarm join-token -q worker
     register: token
     when: role is defined and role == "leader"
 
   - name: add workers
     docker_swarm:
       state: join
-      advertise_addr: 192.168.1.102
-      join_token: "{{ hostvars['rpi01']['token']['stdout'] }}"
-      remote_addrs: [ '192.168.1.101:2377' ]
+      advertise_addr: "{{ ansible_default_ipv4.address }}"
+      join_token: "{{ hostvars[groups['docker'][0]]['token']['swarm_facts']['JoinTokens']['Worker'] }}"
+      remote_addrs: [ "{{ hostvars[groups['docker'][0]].ansible_default_ipv4.address }}:2377" ]
     when: role is undefined
