@@ -1,0 +1,14 @@
+---
+- name: deploy grafana and prometheus
+  hosts: swarm
+  remote_user: pi
+  become: yes
+  
+  vars_files:
+    - ~/vault.yml
+
+  vars:
+    ansible_ssh_pass: "{{ remote_pass }}"
+
+  roles:
+    - monitoring

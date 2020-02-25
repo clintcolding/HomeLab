@@ -1,0 +1,25 @@
+---
+- name: copy prom config
+  copy:
+    src: prometheus.yml
+    dest: /etc/prometheus.yml
+
+- name: create prometheus swarm service
+  docker_swarm_service:
+    name: prom
+    image: prom/prometheus:v2.12.0
+    replicas: 1
+    networks:
+      - traefik
+    placement:
+      constraints:
+        - node.hostname == rpi01
+    labels:
+      traefik.http.routers.prom.rule: "Host(`prom.thecoldings.com`)"
+      traefik.http.services.prom-service.loadbalancer.server.port: "9090"
+      traefik.http.routers.prom.entrypoints: "websecure"
+      traefik.http.routers.prom.tls.certresolver: "httpchallenge"
+    mounts:
+      - source: /etc/prometheus.yml
+        target: /etc/prometheus/prometheus.yml
+        type: bind
