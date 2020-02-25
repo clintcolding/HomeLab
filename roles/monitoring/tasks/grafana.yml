@@ -1,0 +1,26 @@
+---
+- name: create grafana volume
+  docker_volume:
+    name: grafana-data
+
+- name: create grafana swarm service
+  docker_swarm_service:
+    name: grafana
+    image: grafana/grafana:6.3.5
+    replicas: 1
+    networks:
+      - traefik
+    placement:
+      constraints:
+        - node.hostname == rpi02
+    env:
+      GF_INSTALL_PLUGINS: grafana-piechart-panel
+    labels:
+      traefik.http.routers.grafana.rule: "Host(`grafana.thecoldings.com`)"
+      traefik.http.services.grafana-service.loadbalancer.server.port: "3000"
+      traefik.http.routers.grafana.entrypoints: "websecure"
+      traefik.http.routers.grafana.tls.certresolver: "httpchallenge"
+    mounts:
+      - source: grafana-data
+        target: /var/lib/grafana/
+        type: volume
