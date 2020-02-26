@@ -1,12 +1,5 @@
 # Ansible Playbooks
 
-| Playbook | Description |
-|----------|-------------|
-| azure-agent.yml | Installs prereqs and Azure Pipelines agent |
-| clintcolding_web.yml | Deploys clintcolding.com site |
-| pihole_exporter.yml | Deploys a Prometheus exporter for PiHole |
-| whoami.yml | Deploys basic whoami service |
-
 ### Vault File
 
 You'll need a vault file containing the RPi password, to create the vault file run:
