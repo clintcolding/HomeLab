@@ -1,0 +1,29 @@
+- name: deploy pihole exporter swarm service
+  hosts: rpi01
+  remote_user: pi
+  become: yes
+  
+  vars_files:
+    - ~/git/HomeLab/vault.yml
+
+  vars:
+    ansible_ssh_pass: "{{ remote_pass }}"
+
+  tasks:
+    - name: create pihole exporter swarm service
+      docker_swarm_service:
+        name: pihole_exporter
+        image: clintcolding/pihole-exporter:latest
+        networks:
+          - traefik
+        replicas: 1
+        env:
+          PIHOLE_HOSTNAME: "192.168.1.100"
+          PIHOLE_PASSWORD: "{{ pihole_pass }}"
+          INTERVAL: "15s"
+          PORT: "9180"
+        labels:
+          #---- 80 Entry ----#
+          traefik.http.routers.pihole-exporter.rule: "Host(`pihole-exporter.thecoldings.com`)"
+          traefik.http.routers.pihole-exporter.entrypoints: "web"
+          traefik.http.services.pihole-exporter-service.loadbalancer.server.port: "9180"

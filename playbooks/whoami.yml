@@ -1,0 +1,24 @@
+- name: deploy whoami swarm service
+  hosts: rpi01
+  remote_user: pi
+  become: yes
+  
+  vars_files:
+    - ~/git/HomeLab/vault.yml
+
+  vars:
+    ansible_ssh_pass: "{{ remote_pass }}"
+
+  tasks:
+    - name: create whoami swarm service
+      docker_swarm_service:
+        name: whoami
+        image: stefanscherer/whoami
+        networks:
+          - traefik
+        replicas: 2
+        labels:
+          traefik.http.routers.whoami.rule: "Host(`whoami.thecoldings.com`)"
+          traefik.http.services.whoami-service.loadbalancer.server.port: "8080"
+          traefik.http.routers.whoami.entrypoints: "websecure"
+          traefik.http.routers.whoami.tls.certresolver: "httpchallenge"
