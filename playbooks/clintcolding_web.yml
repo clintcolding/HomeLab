@@ -16,17 +16,17 @@
         image: clintcolding/clintcolding_web
         networks:
           - traefik
-        replicas: 2
+        replicas: 1
         labels:
           #---- 80 Entry ----#
           traefik.http.routers.clintcolding_web.rule: "Host(`clintcolding.com`)"
           traefik.http.routers.clintcolding_web.entrypoints: "web"
-          traefik.http.routers.clintcolding_web.middlewares: "redirect"
+          traefik.http.routers.clintcolding_web.middlewares: "ccweb_redirect"
           #---- 443 Entry ----#
           traefik.http.routers.clintcolding_websecure.rule: "Host(`clintcolding.com`)"
           traefik.http.routers.clintcolding_websecure.entrypoints: "websecure"
-          #---- Create the middleware "redirect" used on 80 entry ----#
-          traefik.http.middlewares.redirect.redirectscheme.scheme: "https"
+          #---- Create the middleware "ccweb_redirect" used on 80 entry ----#
+          traefik.http.middlewares.ccweb_redirect.redirectscheme.scheme: "https"
           #---- Expose container port 80 ----#
           traefik.http.services.clintcolding_web-service.loadbalancer.server.port: "80"
           #---- ACME config for websecure router ----#
