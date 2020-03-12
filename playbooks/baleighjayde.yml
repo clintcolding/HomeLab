@@ -1,0 +1,34 @@
+- name: deploy baleighjayde.com swarm service
+  hosts: rpi01
+  remote_user: pi
+  become: yes
+  
+  vars_files:
+    - ~/git/HomeLab/vault.yml
+
+  vars:
+    ansible_ssh_pass: "{{ remote_pass }}"
+
+  tasks:
+    - name: create baleigh jayde blog swarm service
+      docker_swarm_service:
+        name: baleighjayde_blog
+        image:  docker.pkg.github.com/clintcolding/baleighjaydeblog/baleighjaydeblog:latest 
+        networks:
+          - traefik
+        replicas: 1
+        labels:
+          #---- 80 Entry ----#
+          traefik.http.routers.baleighjayde_blog.rule: "Host(`baleighjayde.com`)"
+          traefik.http.routers.baleighjayde_blog.entrypoints: "web"
+          traefik.http.routers.baleighjayde_blog.middlewares: "baleigh_redirect"
+          #---- 443 Entry ----#
+          traefik.http.routers.baleighjayde_blogsecure.rule: "Host(`baleighjayde.com`)"
+          traefik.http.routers.baleighjayde_blogsecure.entrypoints: "websecure"
+          #---- Create the middleware "redirect" used on 80 entry ----#
+          traefik.http.middlewares.baleigh_redirect.redirectscheme.scheme: "https"
+          #---- Expose container port 80 ----#
+          traefik.http.services.baleighjayde_blog-service.loadbalancer.server.port: "80"
+          #---- ACME config for websecure router ----#
+          traefik.http.routers.baleighjayde_blogsecure.tls.certresolver: "httpchallenge"
+          
