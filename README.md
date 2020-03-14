@@ -9,7 +9,6 @@ This is a collection of configurations for my Raspberry Pi home lab.
 ### Things to do:
 
 - [ ] Automate Grafana configuration
-- [ ] Create playbook for full Azure Agent setup
 
 ### Grafana
 
@@ -20,13 +19,6 @@ This is a collection of configurations for my Raspberry Pi home lab.
 ### Telegraf
 
 In order to collect memory metrics you need to enable the memory cgroup by adding `cgroup_enable=memory` to `/boot/cmdline.txt` and then reboot your rpi.
-
-### Azure Runner
-
-> Dependencies can be found [here](https://github.com/microsoft/azure-pipelines-agent/blob/master/src/Misc/layoutbin/installdependencies.sh).
-
-- On rpi01 run `/usr/local/bin/config.sh` to configure the agent.
-- Run `/usr/local/bin/svc.sh install` and then `/usr/local/bin/config.sh start` to install and start the service.
 
 ### RPi SSH Configuration
 
