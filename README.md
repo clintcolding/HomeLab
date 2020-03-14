@@ -32,6 +32,16 @@ In order to collect memory metrics you need to enable the memory cgroup by addin
 
 After flashing the SD card, drop an empty file named `ssh` in the boot directory.
 
+You might need to mount the drive first:
+
+```
+sudo fdisk -l
+mkdir /media/sdmnt
+sudo mount /dev/sdb1 /media/sdmnt
+cd /media/sdmnt
+touch ssh
+```
+
 #### Using SSH Keys
 
 > I'm using a vault file to authenticate to my RPi Docker hosts, alternatively you can use SSH keys.
