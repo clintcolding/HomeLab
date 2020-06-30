@@ -1,0 +1,15 @@
+# This configuration is used to route traffic to Holocron
+http:
+  routers:
+    ombi:
+      entryPoints:
+      - "websecure"
+      service: "ombi-service"
+      rule: "Host(`ombi.clintcolding.com`)"
+      tls:
+        certResolver: "httpchallenge"
+  services:
+    ombi-service:
+      loadBalancer:
+        servers:
+          - url: "http://192.168.1.99:5000"

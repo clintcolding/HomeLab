@@ -1,0 +1,34 @@
+---
+- name: rpi common role
+  hosts: all
+  remote_user: pi
+  become: yes
+  
+  vars_files:
+    - ~/git/HomeLab/vault.yml
+
+  vars:
+    ansible_ssh_pass: "{{ remote_pass }}"
+
+  - name: set hostname
+    command: hostnamectl set-hostname "{{ inventory_hostname }}"
+  
+  - name: update hostname in /etc/hosts 
+    lineinfile:
+      dest: /etc/hosts
+      regexp: "^127.0.1.1\traspberrypi$"
+      line: "127.0.1.1\t{{ inventory_hostname }}"
+  
+  - name: update packages
+    apt:
+      update_cache: yes
+      cache_valid_time: 3600
+      upgrade: full
+  
+  - name: install packages
+    apt:
+      name: "{{ packages }}"
+      state: latest
+    vars:
+      packages:
+        - vim

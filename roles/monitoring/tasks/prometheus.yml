@@ -1,8 +1,18 @@
 ---
+# Persistent nfs volume for metrics
+- name: create nfs volume
+  docker_volume:
+    name: prometheus
+    driver: local
+    driver_options:
+      device: :/mnt/prometheus
+      o: addr=192.168.1.99,rw,noatime,rsize=8192,wsize=8192,tcp,timeo=14
+      type: nfs4
+
 - name: copy prom config
   copy:
     src: prometheus.yml
-    dest: /etc/prometheus.yml
+    dest: /mnt/prometheus/config/prometheus.yml
 
 - name: create prometheus swarm service
   docker_swarm_service:
@@ -11,15 +21,26 @@
     replicas: 1
     networks:
       - traefik
-    placement:
-      constraints:
-        - node.hostname == rpi01
     labels:
-      traefik.http.routers.prom.rule: "Host(`prom.thecoldings.com`)"
+      #---- 80 Entry ----#
+      traefik.http.routers.prom_web.rule: "Host(`prom.clintcolding.com`)"
+      traefik.http.routers.prom_web.entrypoints: "web"
+      traefik.http.routers.prom_web.middlewares: "prom_redirect"
+      #---- Create the middleware "prom_redirect" used on 80 entry ----#
+      traefik.http.middlewares.prom_redirect.redirectscheme.scheme: "https"
+      #---- 443 Entry ----#
+      traefik.http.routers.prom_websecure.rule: "Host(`prom.clintcolding.com`)"
+      traefik.http.routers.prom_websecure.entrypoints: "websecure"
+      #---- Expose port 9090 ----#
       traefik.http.services.prom-service.loadbalancer.server.port: "9090"
-      traefik.http.routers.prom.entrypoints: "websecure"
-      traefik.http.routers.prom.tls.certresolver: "httpchallenge"
+      #---- ACME config for websecure router ----#
+      traefik.http.routers.prom_websecure.tls.certresolver: "httpchallenge"
     mounts:
-      - source: /etc/prometheus.yml
-        target: /etc/prometheus/prometheus.yml
+      - source: /mnt/prometheus/config/
+        target: /etc/prometheus/
         type: bind
+        propagation: shared
+      - source: prometheus
+        target: /prometheus
+        type: volume
+  when: role is defined and role == "leader"

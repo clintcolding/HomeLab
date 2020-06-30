@@ -1,5 +1,5 @@
 - name: deploy traefik
-  hosts: all
+  hosts: docker
   remote_user: pi
   become: yes
   

@@ -1,7 +1,12 @@
 ---
-- name: create grafana volume
+- name: create nfs volume
   docker_volume:
-    name: grafana-data
+    name: grafana
+    driver: local
+    driver_options:
+      device: :/mnt/grafana
+      o: addr=192.168.1.99,rw,noatime,rsize=8192,wsize=8192,tcp,timeo=14
+      type: nfs4
 
 - name: create grafana swarm service
   docker_swarm_service:
@@ -10,17 +15,29 @@
     replicas: 1
     networks:
       - traefik
-    placement:
-      constraints:
-        - node.hostname == rpi02
     env:
       GF_INSTALL_PLUGINS: grafana-piechart-panel
+      GF_SECURITY_ALLOW_EMBEDDING: "true"
+      GF_AUTH_ANONYMOUS_ENABLED: "true"
+      GF_AUTH_ANONYMOUS_ORG_NAME: "Anon"
+      # GF_AUTH_BASIC_ENABLED: false
+      # GF_AUTH_PROXY_ENABLED: false
     labels:
-      traefik.http.routers.grafana.rule: "Host(`grafana.thecoldings.com`)"
+      #---- 80 Entry ----#
+      traefik.http.routers.grafana_web.rule: "Host(`grafana.clintcolding.com`)"
+      traefik.http.routers.grafana_web.entrypoints: "web"
+      traefik.http.routers.grafana_web.middlewares: "grafana_redirect"
+      #---- Create the middleware "grafana_redirect" used on 80 entry ----#
+      traefik.http.middlewares.grafana_redirect.redirectscheme.scheme: "https"
+      #---- 443 Entry ----#
+      traefik.http.routers.grafana_websecure.rule: "Host(`grafana.clintcolding.com`)"
+      traefik.http.routers.grafana_websecure.entrypoints: "websecure"
+      #---- Expose port 3000 ----#
       traefik.http.services.grafana-service.loadbalancer.server.port: "3000"
-      traefik.http.routers.grafana.entrypoints: "websecure"
-      traefik.http.routers.grafana.tls.certresolver: "httpchallenge"
+      #---- ACME config for websecure router ----#
+      traefik.http.routers.grafana_websecure.tls.certresolver: "httpchallenge"
     mounts:
-      - source: grafana-data
-        target: /var/lib/grafana/
+      - source: grafana
+        target: /var/lib/grafana
         type: volume
+  when: role is defined and role == "leader"

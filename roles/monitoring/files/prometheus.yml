@@ -26,17 +26,41 @@ scrape_configs:
     - 192.168.1.100:9180
     - 192.168.1.101:9180
     - 192.168.1.102:9180
+    - 192.168.1.103:9180
 - job_name: traefik
   honor_timestamps: true
   metrics_path: /metrics
   scheme: http
   static_configs:
   - targets:
-    - 192.168.1.101:8081
+    - 192.168.1.101:8080
 - job_name: pihole
   honor_timestamps: true
   metrics_path: /metrics
   scheme: http
   static_configs:
   - targets:
-    - pihole-exporter.thecoldings.com
+    - pihole-exporter.clintcolding.com
+- job_name: holocron
+  honor_timestamps: true
+  metrics_path: /metrics
+  scheme: http
+  static_configs:
+  - targets:
+    - 192.168.1.99:9180
+- job_name: edgerouter
+  scrape_interval: 5s
+  honor_timestamps: true
+  metrics_path: /metrics
+  scheme: http
+  static_configs:
+  - targets:
+    - 192.168.1.1:9100
+- job_name: plex
+  scrape_interval: 15s
+  honor_timestamps: true
+  metrics_path: /metrics
+  scheme: http
+  static_configs:
+  - targets:
+    - 192.168.1.99:9090

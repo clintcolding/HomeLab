@@ -21,6 +21,11 @@
     src: rpi-temp.sh
     dest: /usr/local/bin/rpi-temp.sh
 
+- name: start telegraf
+  service:
+    name: telegraf
+    state: restarted
+
 - name: add telegraf user to docker group
   user:
     name: telegraf

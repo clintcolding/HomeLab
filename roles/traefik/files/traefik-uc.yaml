@@ -1,0 +1,16 @@
+# This configuration is used to route traffic to a 2nd
+# RaspberryPi that isn't part of the Swarm
+http:
+  routers:
+    uc:
+      entryPoints:
+      - "websecure"
+      service: "uc-service"
+      rule: "Host(`uc.thecoldings.com`)"
+      tls:
+        certResolver: "httpchallenge"
+  services:
+    uc-service:
+      loadBalancer:
+        servers:
+          - url: "https://192.168.1.100:8443"

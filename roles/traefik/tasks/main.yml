@@ -9,9 +9,18 @@
   docker_volume:
     name: traefik-certs
 
+- name: copy file configuration
+  copy:
+    src: "{{ item }}"
+    dest: "/mnt/{{ item }}"
+  with_items:
+    - traefik-uc.yaml
+    - traefik-deluge.yaml
+    - traefik-ombi.yaml
+
 - name: create traefik swarm service
   docker_swarm_service:
-    name: traefikv2
+    name: traefik
     image: traefik:v2.0
     networks:
       - traefik
@@ -24,6 +33,8 @@
       - "--providers.docker"
       - "--providers.docker.swarmmode=true"
       - "--providers.docker.watch"
+      # Enable the File provider
+      - "--providers.file.directory=/etc/traefik/dynamic"
       # Configure ACME Let's Encrypt
       - "--entryPoints.web.address=:80"
       - "--entryPoints.websecure.address=:443"
@@ -40,7 +51,7 @@
         target_port: 80
       - published_port: 443
         target_port: 443
-      - published_port: 8081
+      - published_port: 8080
         target_port: 8080
     mounts:
       - source: /var/run/docker.sock
@@ -49,6 +60,17 @@
       - source: traefik-certs
         target: /letsencrypt
         type: volume
+      - source: /mnt/traefik-uc.yaml
+        target: /etc/traefik/dynamic/traefik-uc.yaml
+        type: bind
+      - source: /mnt/traefik-deluge.yaml
+        target: /etc/traefik/dynamic/traefik-deluge.yaml
+        type: bind
+      - source: /mnt/traefik-ombi.yaml
+        target: /etc/traefik/dynamic/traefik-ombi.yaml
+        type: bind
     placement:
       constraints:
         - node.role == manager
+  when: role is defined and role == "leader"
+

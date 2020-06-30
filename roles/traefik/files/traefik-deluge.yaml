@@ -1,0 +1,16 @@
+# This configuration is used to route traffic to a 2nd
+# RaspberryPi that isn't part of the Swarm
+http:
+  routers:
+    deluge:
+      entryPoints:
+      - "websecure"
+      service: "deluge-service"
+      rule: "Host(`deluge.thecoldings.com`)"
+      tls:
+        certResolver: "httpchallenge"
+  services:
+    deluge-service:
+      loadBalancer:
+        servers:
+          - url: "http://192.168.1.103:8112"

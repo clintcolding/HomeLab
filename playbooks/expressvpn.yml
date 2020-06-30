@@ -1,5 +1,5 @@
-- name: configure swarm
-  hosts: docker
+- name: expressvpn
+  hosts: plex
   remote_user: pi
   become: yes
   
@@ -9,5 +9,5 @@
   vars:
     ansible_ssh_pass: "{{ remote_pass }}"
 
-  roles:
-    - swarm
+  tasks:
+    

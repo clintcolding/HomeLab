@@ -12,8 +12,12 @@
   apt:
     update_cache: yes
     cache_valid_time: 3600
+    upgrade: full
 
-- name: install aptitude
+- name: install packages
   apt:
-    name: aptitude
+    name: "{{ packages }}"
     state: latest
+  vars:
+    packages:
+      - vim

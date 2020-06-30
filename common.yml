@@ -1,5 +1,5 @@
 - name: rpi common role
-  hosts: all
+  hosts: plex
   remote_user: pi
   become: yes
   

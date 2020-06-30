@@ -5,5 +5,5 @@ rpiman ansible_host=192.168.1.100
 rpi01 ansible_host=192.168.1.101 role=leader
 rpi02 ansible_host=192.168.1.102
 
-[plex]
+[deluge]
 rpi03 ansible_host=192.168.1.103
