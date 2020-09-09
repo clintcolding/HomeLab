@@ -1,14 +1,4 @@
 ---
-# Persistent nfs volume for metrics
-- name: create nfs volume
-  docker_volume:
-    name: prometheus
-    driver: local
-    driver_options:
-      device: :/mnt/prometheus
-      o: addr=192.168.1.99,rw,noatime,rsize=8192,wsize=8192,tcp,timeo=14
-      type: nfs4
-
 - name: copy prom config
   copy:
     src: prometheus.yml
@@ -43,4 +33,3 @@
       - source: prometheus
         target: /prometheus
         type: volume
-  when: role is defined and role == "leader"

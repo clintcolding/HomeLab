@@ -1,13 +1,4 @@
 ---
-- name: create nfs volume
-  docker_volume:
-    name: grafana
-    driver: local
-    driver_options:
-      device: :/mnt/grafana
-      o: addr=192.168.1.99,rw,noatime,rsize=8192,wsize=8192,tcp,timeo=14
-      type: nfs4
-
 - name: create grafana swarm service
   docker_swarm_service:
     name: grafana
@@ -40,4 +31,3 @@
       - source: grafana
         target: /var/lib/grafana
         type: volume
-  when: role is defined and role == "leader"

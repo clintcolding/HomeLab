@@ -1,4 +1,5 @@
 ---
-# - import_tasks: telegraf.yml
-# - import_tasks: prometheus.yml
+- import_tasks: create_nfs.yml
+- import_tasks: telegraf.yml
+- import_tasks: prometheus.yml
 - import_tasks: grafana.yml

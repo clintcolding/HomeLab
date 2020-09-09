@@ -1,11 +1,11 @@
 ---
 - name: add influxdb key
   apt_key:
-    url: https://repos.influxdata.com/influxdb.key
+    url: "{{ influxdb_key }}"
 
 - name: add influxdata repo
   apt_repository:
-    repo: deb https://repos.influxdata.com/debian stretch stable
+    repo: "{{ influxdb_repo }}"
 
 - name: install telegraf
   apt:
@@ -14,24 +14,17 @@
 - name: copy config
   copy:
     src: telegraf.conf
-    dest: /etc/telegraf/telegraf.conf
+    dest: "{{ telegraf_dest }}"
+  notify: restart telegraf
 
 - name: copy rpi thermal script
   copy:
     src: rpi-temp.sh
-    dest: /usr/local/bin/rpi-temp.sh
-
-- name: start telegraf
-  service:
-    name: telegraf
-    state: restarted
+    dest: "{{ thermal_script_dest }}"
+  notify: restart telegraf
 
 - name: add telegraf user to docker group
   user:
     name: telegraf
     groups: docker
-
-- name: start telegraf
-  service:
-    name: telegraf
-    state: restarted
+  notify: restart telegraf
