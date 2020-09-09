@@ -1,2 +1,8 @@
 ---
-# defaults file for monitoring
+influxdb_key: "https://repos.influxdata.com/influxdb.key"
+influxdb_repo: "deb https://repos.influxdata.com/debian stretch stable"
+
+telegraf_dest: "/etc/telegraf/telegraf.conf"
+thermal_script_dest: "/usr/local/bin/rpi-temp.sh"
+
+nfs_mount: "addr=192.168.1.99,rw,noatime,rsize=8192,wsize=8192,tcp,timeo=14"
