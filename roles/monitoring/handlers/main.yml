@@ -1,2 +1,5 @@
 ---
-# handlers file for monitoring
+- name: restart telegraf
+  service:
+    name: telegraf
+    state: restarted
