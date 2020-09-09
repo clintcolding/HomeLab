@@ -10,4 +10,6 @@
     ansible_ssh_pass: "{{ remote_pass }}"
 
   roles:
+    - common
+    - docker
     - swarm
