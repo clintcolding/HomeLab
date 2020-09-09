@@ -6,10 +6,6 @@
 
 This is a collection of configurations for my Raspberry Pi home lab.
 
-### Things to do:
-
-- [ ] Automate Grafana configuration
-
 ### Grafana
 
 <p align="center">
