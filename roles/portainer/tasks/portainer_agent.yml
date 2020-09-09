@@ -1,0 +1,17 @@
+---
+- name: create portainer agent service
+  docker_swarm_service:
+    name: portainer_agent
+    image: portainer/agent
+    networks:
+      - portainer_agent_network
+    mode: global
+    mounts:
+      - source: //var/run/docker.sock
+        target: /var/run/docker.sock
+        type: bind
+      - source: //var/lib/docker/volumes
+        target: /var/lib/docker/volumes
+        type: bind
+    labels:
+      traefik.enable: "false"

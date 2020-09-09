@@ -1,0 +1,10 @@
+---
+- name: create portainer network
+  docker_network:
+    name: portainer_agent_network
+    driver: overlay
+    attachable: yes
+
+- name: create portainer volume
+  docker_volume:
+    name: portainer-data

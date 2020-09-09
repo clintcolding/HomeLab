@@ -1,0 +1,20 @@
+---
+- name: create traefik network
+  docker_network:
+    name: traefik
+    driver: overlay
+    attachable: yes
+
+- name: create certificate volume
+  docker_volume:
+    name: traefik-certs
+
+- name: copy file configuration
+  copy:
+    src: "{{ item }}"
+    dest: "/mnt/{{ item }}"
+  with_items:
+    - traefik-uc.yaml
+    - traefik-deluge.yaml
+    - traefik-ombi.yaml
+    - traefik-ha.yaml

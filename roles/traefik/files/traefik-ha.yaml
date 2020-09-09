@@ -1,0 +1,15 @@
+# This configuration is used to route traffic to rpiha
+http:
+  routers:
+    ha:
+      entryPoints:
+      - "websecure"
+      service: "ha-service"
+      rule: "Host(`ha.thecoldings.com`)"
+      tls:
+        certResolver: "httpchallenge"
+  services:
+    ha-service:
+      loadBalancer:
+        servers:
+          - url: "http://192.168.1.98:8123"

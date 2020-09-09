@@ -1,0 +1,33 @@
+---
+- name: create mount dir's
+  file:
+    path: /mnt/{{ item }}
+    state: directory
+  with_items:
+    - grafana
+    - prometheus
+
+- name: mount nfs target
+  mount:
+    path: /mnt/{{ item }}
+    src: 192.168.1.99:/mnt/{{ item }}
+    fstype: nfs
+    opts: defaults
+    passno: 0
+    dump: 0
+    state: mounted
+  with_items:
+    - grafana
+    - prometheus
+
+- name: create nfs docker volumes
+  docker_volume:
+    name: "{{ item }}"
+    driver: local
+    driver_options:
+      device: :/mnt/"{{ item }}"
+      o: "{{ nfs_mount }}"
+      type: nfs4
+  with_items:
+    - grafana
+    - prometheus
