@@ -1,0 +1,44 @@
+---
+- name: update packages
+  apt:
+    update_cache: yes
+    cache_valid_time: 3600
+
+- name: install docker prereqs
+  apt:
+    name: "{{ packages }}"
+    state: latest
+  vars:
+    packages:
+      - apt-transport-https
+      - ca-certificates
+      - software-properties-common
+      - python-pip
+
+- name: add docker GPG Key
+  apt_key:
+    url: "{{ docker_gpg_key }}"
+
+- name: add docker repo
+  apt_repository:
+    repo: "{{ docker_apt_repo }}"
+    update_cache: yes
+
+- name: install docker
+  apt:
+    name: "{{ packages }}"
+  vars:
+    packages:
+      - docker-ce
+      - docker-ce-cli
+      - containerd.io
+
+- name: install python docker sdk
+  pip:
+    name: docker
+    executable: pip
+
+- name: install python docker sdk
+  pip:
+    name: docker-compose
+    executable: pip3
